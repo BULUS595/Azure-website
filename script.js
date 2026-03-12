@@ -4,7 +4,12 @@
 
 // Initialize EmailJS - Replace with your Public Key
 // Get your Public Key from EmailJS dashboard
-emailjs.init('M8YbaMb1hqQFyheiv'); // TODO: Replace with your EmailJS Public Key
+emailjs.init('M8YbaMb1hqQFyheiv');
+
+// Check if EmailJS is loaded
+if (typeof emailjs === 'undefined') {
+    console.error('EmailJS library not loaded. Check that the script tag is included in HTML.');
+}
 
 // ==========================================
 // ==========================================
@@ -78,6 +83,13 @@ contactForm.addEventListener('submit', async (e) => {
     const request = document.getElementById('request').value.trim();
     const message = document.getElementById('message').value.trim();
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showStatus('Please enter a valid email address', 'error');
+        return;
+    }
+
     // Validate form
     if (!name || !email || !phone || !request || !message) {
         showStatus('Please fill in all fields', 'error');
@@ -90,31 +102,59 @@ contactForm.addEventListener('submit', async (e) => {
     try {
         // Send email using EmailJS
         const response = await emailjs.send(
-            'service_3qvet2i', // Your Service ID
-            'template_yfey2qh', // Your Template ID
+            'service_3qvet2i',     // Your Service ID
+            'template_yfey2qh',    // Your Template ID
             {
                 from_name: name,
                 from_email: email,
                 phone_number: phone,
                 project_request: request,
                 message: message,
-                to_email: 'dre7080552@gmail.com'
-            }
+                to_email: 'dre7080552@gmail.com',
+                reply_to: email  // Add reply-to for better email routing
+            },
+            'M8YbaMb1hqQFyheiv'  // Explicit public key
         );
 
-        console.log('EmailJS Response:', response);
+        // Log success for debugging
+        console.log('✓ Email sent successfully!', response);
 
         if (response.status === 200) {
             showStatus('✓ Message sent successfully! I\'ll get back to you soon.', 'success');
             contactForm.reset();
-        } else {
-            showStatus('Error sending message. Please try again.', 'error');
         }
     } catch (error) {
-        console.error('EmailJS Error Details:', error);
-        console.error('Error Status:', error.status);
-        console.error('Error Text:', error.text);
-        showStatus('Error: ' + (error.text || 'Failed to send message. Please try again.'), 'error');
+        // Detailed error logging
+        console.error('❌ EmailJS Error:', error);
+        console.error('Error Name:', error.name);
+        console.error('Error Message:', error.message);
+        
+        if (error.status) {
+            console.error('Error Status:', error.status);
+        }
+        
+        if (error.text) {
+            console.error('Error Details:', error.text);
+        }
+
+        // User-friendly error message
+        let userMessage = 'Failed to send message. ';
+        
+        if (error.status === 0) {
+            userMessage += 'Network error. Check your internet connection.';
+        } else if (error.status === 400) {
+            userMessage += 'Invalid form data. Please check your inputs.';
+        } else if (error.status === 401) {
+            userMessage += 'Authentication error. Please try again later.';
+        } else if (error.status === 403) {
+            userMessage += 'Permission denied. Service may be unavailable.';
+        } else if (error.text) {
+            userMessage += error.text;
+        } else {
+            userMessage += 'Please try again later.';
+        }
+        
+        showStatus(userMessage, 'error');
     }
 });
 
@@ -122,12 +162,12 @@ function showStatus(message, type) {
     formStatus.textContent = message;
     formStatus.className = 'form-status ' + type;
 
-    // Clear message after 5 seconds
+    // Clear message after 6 seconds for success, keep error visible
     if (type === 'success') {
         setTimeout(() => {
             formStatus.textContent = '';
             formStatus.className = 'form-status';
-        }, 5000);
+        }, 6000);
     }
 }
 

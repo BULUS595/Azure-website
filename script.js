@@ -2,14 +2,27 @@
 // EMAILJS INITIALIZATION
 // ==========================================
 
-// Wait for EmailJS library to load
+// EmailJS initialization with retry logic and max attempts
+let emailjsRetryCount = 0;
+const MAX_EMAILJS_RETRIES = 50; // Max 5 seconds of retrying (50 × 100ms)
+
 function initEmailJS() {
     if (typeof emailjs !== 'undefined') {
-        emailjs.init('M8YbaMb1hqQFyheiv');
-        console.log('✓ EmailJS initialized successfully');
-    } else {
-        console.warn('⚠ EmailJS library not yet loaded, retrying in 100ms...');
+        try {
+            emailjs.init('M8YbaMb1hqQFyheiv');
+            console.log('✓ EmailJS initialized successfully');
+        } catch (error) {
+            console.error('Error initializing EmailJS:', error);
+        }
+        return;
+    }
+    
+    emailjsRetryCount++;
+    
+    if (emailjsRetryCount < MAX_EMAILJS_RETRIES) {
         setTimeout(initEmailJS, 100);
+    } else {
+        console.error('❌ EmailJS failed to load after multiple attempts. Email functionality may not work.');
     }
 }
 
@@ -19,6 +32,13 @@ if (document.readyState === 'loading') {
 } else {
     initEmailJS();
 }
+
+// Also try loading when window loads
+window.addEventListener('load', () => {
+    if (typeof emailjs === 'undefined') {
+        initEmailJS();
+    }
+});
 
 // ==========================================
 // ==========================================
@@ -87,8 +107,8 @@ contactForm.addEventListener('submit', async (e) => {
 
     // Check if EmailJS is initialized
     if (typeof emailjs === 'undefined') {
-        showStatus('Email service unavailable. Please try again shortly.', 'error');
-        console.error('EmailJS not loaded when form submitted');
+        showStatus('Email service is loading. Please wait a moment and try again.', 'error');
+        console.error('EmailJS not loaded when form submitted. Retry count:', emailjsRetryCount);
         return;
     }
 
@@ -161,13 +181,13 @@ contactForm.addEventListener('submit', async (e) => {
         } else if (error.status === 400) {
             userMessage += 'Invalid form data. Please check your inputs.';
         } else if (error.status === 401) {
-            userMessage += 'Authentication error. Please try again later.';
+            userMessage += 'Authentication error. Please try again in a few moments.';
         } else if (error.status === 403) {
-            userMessage += 'Permission denied. Service may be unavailable.';
+            userMessage += 'Permission denied. Service may be temporarily unavailable.';
         } else if (error.text) {
             userMessage += error.text;
         } else {
-            userMessage += 'Please try again later.';
+            userMessage += 'Please try again shortly.';
         }
         
         showStatus(userMessage, 'error');

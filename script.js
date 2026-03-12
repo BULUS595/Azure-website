@@ -15,7 +15,7 @@ function initEmailJS() {
     
     if (emailjsLib && emailjsLib.init) {
         try {
-            emailjsLib.init('M8YbaMb1hqQFyheiv');
+            emailjsLib.init('qNaDXo_utvnDMWS3Q');
             emailjsInitialized = true;
             console.log('✓ EmailJS initialized successfully');
             return;
@@ -157,7 +157,7 @@ contactForm.addEventListener('submit', async (e) => {
                 to_email: 'dre7080552@gmail.com',
                 reply_to: email  // Add reply-to for better email routing
             },
-            'M8YbaMb1hqQFyheiv'  // Explicit public key
+            'qNaDXo_utvnDMWS3Q'  // Explicit public key
         );
 
         // Log success for debugging

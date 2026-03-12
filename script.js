@@ -2,18 +2,18 @@
 // EMAILJS INITIALIZATION
 // ==========================================
 
-// EmailJS initialization with retry logic and max attempts
+// EmailJS initialization with retry logic
 let emailjsRetryCount = 0;
-const MAX_EMAILJS_RETRIES = 50; // Max 5 seconds of retrying (50 × 100ms)
+const MAX_EMAILJS_RETRIES = 30; // Max 3 seconds
 let emailjsInitialized = false;
 
 function initEmailJS() {
-    // Check multiple possible locations for emailjs
+    // Check for emailjs library in multiple locations
     const emailjsLib = typeof emailjs !== 'undefined' ? emailjs : 
                        typeof window.emailjs !== 'undefined' ? window.emailjs :
                        null;
     
-    if (emailjsLib) {
+    if (emailjsLib && emailjsLib.init) {
         try {
             emailjsLib.init('M8YbaMb1hqQFyheiv');
             emailjsInitialized = true;
@@ -22,7 +22,6 @@ function initEmailJS() {
         } catch (error) {
             console.error('Error initializing EmailJS:', error);
             emailjsInitialized = false;
-            return;
         }
     }
     
@@ -31,23 +30,21 @@ function initEmailJS() {
     if (emailjsRetryCount < MAX_EMAILJS_RETRIES) {
         setTimeout(initEmailJS, 100);
     } else {
-        console.error('❌ EmailJS failed to load after multiple attempts. Check CDN connectivity.');
+        console.error('❌ EmailJS failed to load. CDN may be unavailable or blocked.');
         emailjsInitialized = false;
     }
 }
 
-// Try to initialize immediately
+// Initialize immediately
 initEmailJS();
 
-// Initialize EmailJS after DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initEmailJS);
-}
+// Initialize after DOM ready
+document.addEventListener('DOMContentLoaded', initEmailJS);
 
-// Also try loading when window fully loads
+// Try again on full page load
 window.addEventListener('load', () => {
     if (!emailjsInitialized) {
-        initEmailJS();
+        setTimeout(initEmailJS, 500);
     }
 });
 

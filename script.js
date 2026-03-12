@@ -2,13 +2,22 @@
 // EMAILJS INITIALIZATION
 // ==========================================
 
-// Initialize EmailJS - Replace with your Public Key
-// Get your Public Key from EmailJS dashboard
-emailjs.init('M8YbaMb1hqQFyheiv');
+// Wait for EmailJS library to load
+function initEmailJS() {
+    if (typeof emailjs !== 'undefined') {
+        emailjs.init('M8YbaMb1hqQFyheiv');
+        console.log('✓ EmailJS initialized successfully');
+    } else {
+        console.warn('⚠ EmailJS library not yet loaded, retrying in 100ms...');
+        setTimeout(initEmailJS, 100);
+    }
+}
 
-// Check if EmailJS is loaded
-if (typeof emailjs === 'undefined') {
-    console.error('EmailJS library not loaded. Check that the script tag is included in HTML.');
+// Initialize EmailJS after DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initEmailJS);
+} else {
+    initEmailJS();
 }
 
 // ==========================================
@@ -75,6 +84,13 @@ const formStatus = document.getElementById('formStatus');
 
 contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    // Check if EmailJS is initialized
+    if (typeof emailjs === 'undefined') {
+        showStatus('Email service unavailable. Please try again shortly.', 'error');
+        console.error('EmailJS not loaded when form submitted');
+        return;
+    }
 
     // Get form data
     const name = document.getElementById('name').value.trim();

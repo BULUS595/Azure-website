@@ -523,69 +523,170 @@ section {
    ========================================== */
 
 .contact {
-    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 50%, #e0f2fe 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Decorative gradient orbs */
+.contact::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -15%;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
+    animation: drift 16s ease-in-out infinite;
+    filter: blur(50px);
+    z-index: 0;
+}
+
+.contact::after {
+    content: '';
+    position: absolute;
+    bottom: -35%;
+    left: -10%;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.06) 0%, transparent 70%);
+    animation: drift 18s ease-in-out infinite reverse;
+    filter: blur(50px);
+    z-index: 0;
+}
+
+.contact .container {
+    position: relative;
+    z-index: 1;
 }
 
 .contact-wrapper {
-    max-width: 600px;
+    max-width: 700px;
     margin: 0 auto;
+    perspective: 1000px;
 }
 
 .contact-form {
     background: var(--white);
-    padding: 3rem;
-    border-radius: 12px;
-    box-shadow: var(--shadow-lg);
-    animation: fadeInUp 0.8s ease;
+    padding: 4rem 3rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 20px 60px rgba(37, 99, 235, 0.15);
+    border: 1px solid rgba(37, 99, 235, 0.1);
+    animation: fadeInUp 0.9s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Form background accent */
+.contact-form::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.contact-form > * {
+    position: relative;
+    z-index: 1;
 }
 
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
     color: var(--text-dark);
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 1rem;
+    letter-spacing: -0.3px;
+    line-height: 1.4;
 }
 
 .form-group input,
 .form-group textarea {
     width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--light-gray);
-    border-radius: 8px;
-    font-size: 0.95rem;
+    padding: 1rem 1.25rem;
+    border: 2px solid rgba(37, 99, 235, 0.15);
+    border-radius: 12px;
+    font-size: 1rem;
     font-family: 'Poppins', sans-serif;
     transition: var(--transition);
+    background: rgba(37, 99, 235, 0.02);
+    color: var(--text-dark);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: rgba(107, 114, 128, 0.5);
+}
+
+.form-group input:hover,
+.form-group textarea:hover {
+    border-color: rgba(37, 99, 235, 0.3);
+    background: rgba(37, 99, 235, 0.04);
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
     border-color: var(--primary-blue);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    background: rgba(37, 99, 235, 0.06);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15), inset 0 0 0 1px rgba(37, 99, 235, 0.1);
 }
 
 .form-group textarea {
     resize: vertical;
-    min-height: 120px;
+    min-height: 140px;
+    font-size: 0.95rem;
 }
 
 .btn-submit {
     width: 100%;
-    padding: 1rem;
-    font-size: 1rem;
-    margin-top: 1rem;
+    padding: 1.1rem 2rem;
+    font-size: 1.05rem;
+    margin-top: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-submit::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+    transition: left 0.7s ease;
+}
+
+.btn-submit:hover::after {
+    left: 100%;
+}
+
+.btn-submit:active {
+    transform: scale(0.98);
 }
 
 .form-status {
     text-align: center;
-    margin-top: 1rem;
-    font-size: 0.9rem;
-    min-height: 20px;
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+    min-height: 24px;
+    font-weight: 500;
+    animation: slideIn 0.4s ease;
 }
 
 .form-status.success {
@@ -594,6 +695,17 @@ section {
 
 .form-status.error {
     color: #dc2626;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ==========================================
@@ -822,6 +934,51 @@ section {
         left: -20%;
         bottom: -40%;
     }
+
+    .contact-form {
+        padding: 3rem 2.25rem;
+        border-radius: 16px;
+    }
+
+    .form-group {
+        margin-bottom: 1.75rem;
+    }
+
+    .form-group label {
+        font-size: 0.95rem;
+        margin-bottom: 0.65rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        padding: 0.875rem 1.1rem;
+        font-size: 1rem;
+        border-radius: 10px;
+    }
+
+    .form-group textarea {
+        min-height: 120px;
+    }
+
+    .btn-submit {
+        padding: 1rem 1.75rem;
+        font-size: 1rem;
+        margin-top: 1.25rem;
+    }
+
+    .contact::before {
+        width: 400px;
+        height: 400px;
+        right: -25%;
+        top: -40%;
+    }
+
+    .contact::after {
+        width: 350px;
+        height: 350px;
+        left: -20%;
+        bottom: -40%;
+    }
 }
 
 @media (max-width: 480px) {
@@ -938,6 +1095,59 @@ section {
     }
 
     .services::after {
+        width: 250px;
+        height: 250px;
+        left: -25%;
+        bottom: -50%;
+    }
+
+    .contact-form {
+        padding: 2.25rem 1.5rem;
+        border-radius: 14px;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        font-size: 0.9rem;
+        margin-bottom: 0.55rem;
+        font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        border-radius: 9px;
+        border: 2px solid rgba(37, 99, 235, 0.12);
+    }
+
+    .form-group textarea {
+        min-height: 100px;
+        font-size: 0.9rem;
+    }
+
+    .btn-submit {
+        padding: 0.875rem 1.5rem;
+        font-size: 0.95rem;
+        margin-top: 1rem;
+    }
+
+    .form-status {
+        font-size: 0.85rem;
+        margin-top: 1rem;
+    }
+
+    .contact::before {
+        width: 300px;
+        height: 300px;
+        right: -30%;
+        top: -50%;
+    }
+
+    .contact::after {
         width: 250px;
         height: 250px;
         left: -25%;

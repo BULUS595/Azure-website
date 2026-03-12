@@ -1,5 +1,12 @@
 // ==========================================
-// MOBILE MENU TOGGLE
+// EMAILJS INITIALIZATION
+// ==========================================
+
+// Initialize EmailJS - Replace with your Public Key
+// Get your Public Key from EmailJS dashboard
+emailjs.init('YOUR_PUBLIC_KEY_HERE'); // TODO: Replace with your EmailJS Public Key
+
+// ==========================================
 // ==========================================
 
 const hamburger = document.getElementById('hamburger');
@@ -55,7 +62,7 @@ function updateActiveLink() {
 }
 
 // ==========================================
-// CONTACT FORM HANDLER
+// CONTACT FORM HANDLER - EMAILJS
 // ==========================================
 
 const contactForm = document.getElementById('contactForm');
@@ -81,30 +88,28 @@ contactForm.addEventListener('submit', async (e) => {
     showStatus('Sending your message...', '');
 
     try {
-        // Use FormSubmit.co - free, no setup required
-        const formData = new FormData();
-        formData.append('name', name);
-        formData.append('email', email);
-        formData.append('phone', phone);
-        formData.append('request', request);
-        formData.append('message', message);
+        // Send email using EmailJS
+        const response = await emailjs.send(
+            'YOUR_SERVICE_ID', // TODO: Replace with your Service ID
+            'YOUR_TEMPLATE_ID', // TODO: Replace with your Template ID
+            {
+                from_name: name,
+                from_email: email,
+                phone_number: phone,
+                project_request: request,
+                message: message,
+                to_email: 'dre7080552@gmail.com'
+            }
+        );
 
-        const response = await fetch('https://formsubmit.co/your-email@gmail.com', {
-            method: 'POST',
-            body: formData
-        });
-
-        if (response.ok) {
+        if (response.status === 200) {
             showStatus('✓ Message sent successfully! I\'ll get back to you soon.', 'success');
             contactForm.reset();
         } else {
-            // Fallback success message - data was still collected
-            showStatus('✓ Message received! I\'ll contact you shortly.', 'success');
-            contactForm.reset();
+            showStatus('Error sending message. Please try again.', 'error');
         }
     } catch (error) {
-        console.error('Error:', error);
-        // Still show success - the request was sent
+        console.error('EmailJS Error:', error);
         showStatus('✓ Message received! I\'ll contact you shortly.', 'success');
         contactForm.reset();
     }

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AZURE - Professional web development, web apps, and laptop hardware repair services. Quality solutions for your business.">
+    <meta name="keywords" content="AZURE, web development, web apps, applications, hardware repair, professional services">
+    <meta name="author" content="AZURE">
+    <title>AZURE | Web Development & Software Solutions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='grad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%232563eb;stop-opacity:1' /><stop offset='100%' style='stop-color:%233b82f6;stop-opacity:1' /></linearGradient></defs><rect width='100' height='100' fill='%23ffffff'/><circle cx='50' cy='50' r='40' fill='url(%23grad)'/><text x='50' y='65' font-size='50' font-weight='bold' fill='%23ffffff' text-anchor='middle' font-family='Arial'>⚡</text></svg>">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header class="header" id="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <span class="logo-icon">⚡</span>
+                    <span class="logo-text">AZURE</span>
+                </div>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#home" class="nav-link active">Home</a></li>
+                    <li><a href="#services" class="nav-link">Services</a></li>
+                    <li><a href="#about" class="nav-link">About</a></li>
+                    <li><a href="#contact" class="nav-link">Contact</a></li>
+                </ul>
+                <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">Welcome to AZURE</h1>
+                <p class="hero-subtitle">Expert Web Development, Software Solutions & Hardware Support</p>
+                <a href="#contact" class="btn btn-primary">Get Started</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Our Services</h2>
+                <p class="section-subtitle">Professional solutions tailored to your needs</p>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🌐</div>
+                    <h3>Website Development</h3>
+                    <p>Beautiful, responsive websites built with modern technologies. Perfect for showcasing your business online.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">⚙️</div>
+                    <h3>Web App Development</h3>
+                    <p>Powerful web applications designed to streamline your business processes and improve productivity.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">💻</div>
+                    <h3>Standalone Applications</h3>
+                    <p>Custom desktop and mobile applications built to your exact specifications with robust performance.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">🔧</div>
+                    <h3>Laptop Hardware Repair</h3>
+                    <p>Professional laptop repair and maintenance services to keep your devices running smoothly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">About AZURE</h2>
+                <p class="section-subtitle">Excellence in Technology</p>
+            </div>
+
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>AZURE</h3>
+                    <p>AZURE is a leading technology company dedicated to delivering innovative digital solutions and exceptional service. Our team of experts specializes in web development, software engineering, and comprehensive IT support to help businesses thrive in the digital age.</p>
+                    <p>Founded with a mission to bridge the gap between complex technology and business needs, AZURE provides reliable, professional, and cutting-edge solutions that drive real business value and sustainable growth.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Get In Touch</h2>
+                <p class="section-subtitle">Let's discuss your project or service needs</p>
+            </div>
+
+            <div class="contact-wrapper">
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="request">What do you want us to build?</label>
+                        <input type="text" id="request" name="request" placeholder="Describe your project..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" rows="5" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-submit">Send Message</button>
+                    <p class="form-status" id="formStatus"></p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>AZURE</h3>
+                    <p class="footer-subtitle">Founded by Larry Rimamsikwe Bulus, CEO & Founder</p>
+                    <p class="footer-description">AZURE is your trusted partner for web development, custom software solutions, and professional IT support. We build websites, web apps, and provide comprehensive hardware solutions.</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 AZURE. All rights reserved. | Led by Larry Rimamsikwe Bulus</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

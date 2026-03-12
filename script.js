@@ -5,16 +5,25 @@
 // EmailJS initialization with retry logic and max attempts
 let emailjsRetryCount = 0;
 const MAX_EMAILJS_RETRIES = 50; // Max 5 seconds of retrying (50 × 100ms)
+let emailjsInitialized = false;
 
 function initEmailJS() {
-    if (typeof emailjs !== 'undefined') {
+    // Check multiple possible locations for emailjs
+    const emailjsLib = typeof emailjs !== 'undefined' ? emailjs : 
+                       typeof window.emailjs !== 'undefined' ? window.emailjs :
+                       null;
+    
+    if (emailjsLib) {
         try {
-            emailjs.init('M8YbaMb1hqQFyheiv');
+            emailjsLib.init('M8YbaMb1hqQFyheiv');
+            emailjsInitialized = true;
             console.log('✓ EmailJS initialized successfully');
+            return;
         } catch (error) {
             console.error('Error initializing EmailJS:', error);
+            emailjsInitialized = false;
+            return;
         }
-        return;
     }
     
     emailjsRetryCount++;
@@ -22,20 +31,22 @@ function initEmailJS() {
     if (emailjsRetryCount < MAX_EMAILJS_RETRIES) {
         setTimeout(initEmailJS, 100);
     } else {
-        console.error('❌ EmailJS failed to load after multiple attempts. Email functionality may not work.');
+        console.error('❌ EmailJS failed to load after multiple attempts. Check CDN connectivity.');
+        emailjsInitialized = false;
     }
 }
+
+// Try to initialize immediately
+initEmailJS();
 
 // Initialize EmailJS after DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initEmailJS);
-} else {
-    initEmailJS();
 }
 
-// Also try loading when window loads
+// Also try loading when window fully loads
 window.addEventListener('load', () => {
-    if (typeof emailjs === 'undefined') {
+    if (!emailjsInitialized) {
         initEmailJS();
     }
 });
@@ -106,9 +117,9 @@ contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     // Check if EmailJS is initialized
-    if (typeof emailjs === 'undefined') {
+    if (!emailjsInitialized || typeof emailjs === 'undefined') {
         showStatus('Email service is loading. Please wait a moment and try again.', 'error');
-        console.error('EmailJS not loaded when form submitted. Retry count:', emailjsRetryCount);
+        console.error('EmailJS not initialized. Retry count:', emailjsRetryCount);
         return;
     }
 

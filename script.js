@@ -4,7 +4,7 @@
 
 // Initialize EmailJS - Replace with your Public Key
 // Get your Public Key from EmailJS dashboard
-emailjs.init('YOUR_PUBLIC_KEY_HERE'); // TODO: Replace with your EmailJS Public Key
+emailjs.init('M8YbaMb1hqQFyheiv'); // TODO: Replace with your EmailJS Public Key
 
 // ==========================================
 // ==========================================
@@ -90,8 +90,8 @@ contactForm.addEventListener('submit', async (e) => {
     try {
         // Send email using EmailJS
         const response = await emailjs.send(
-            'YOUR_SERVICE_ID', // TODO: Replace with your Service ID
-            'YOUR_TEMPLATE_ID', // TODO: Replace with your Template ID
+            'service_3qvet2i', // Your Service ID
+            'template_yfey2qh', // Your Template ID
             {
                 from_name: name,
                 from_email: email,
@@ -102,6 +102,8 @@ contactForm.addEventListener('submit', async (e) => {
             }
         );
 
+        console.log('EmailJS Response:', response);
+
         if (response.status === 200) {
             showStatus('✓ Message sent successfully! I\'ll get back to you soon.', 'success');
             contactForm.reset();
@@ -109,9 +111,10 @@ contactForm.addEventListener('submit', async (e) => {
             showStatus('Error sending message. Please try again.', 'error');
         }
     } catch (error) {
-        console.error('EmailJS Error:', error);
-        showStatus('✓ Message received! I\'ll contact you shortly.', 'success');
-        contactForm.reset();
+        console.error('EmailJS Error Details:', error);
+        console.error('Error Status:', error.status);
+        console.error('Error Text:', error.text);
+        showStatus('Error: ' + (error.text || 'Failed to send message. Please try again.'), 'error');
     }
 });
 

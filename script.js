@@ -4,25 +4,41 @@
 
 // EmailJS initialization with retry logic
 let emailjsRetryCount = 0;
-const MAX_EMAILJS_RETRIES = 30; // Max 3 seconds
+const MAX_EMAILJS_RETRIES = 50;
 let emailjsInitialized = false;
 
 function initEmailJS() {
-    // Check for emailjs library in multiple locations
-    const emailjsLib = typeof emailjs !== 'undefined' ? emailjs : 
-                       typeof window.emailjs !== 'undefined' ? window.emailjs :
-                       null;
+    // Check for emailjs library - handle both old and new package formats
+    let emailjsLib = null;
     
-    if (emailjsLib && emailjsLib.init) {
+    if (typeof emailjs !== 'undefined') {
+        emailjsLib = emailjs;
+    } else if (typeof window.emailjs !== 'undefined') {
+        emailjsLib = window.emailjs;
+    }
+    
+    if (emailjsLib) {
+        console.log('EmailJS library found, attempting initialization...');
+        
+        // Try different initialization methods for compatibility
         try {
-            emailjsLib.init('qNaDXo_utvnDMWS3Q');
-            emailjsInitialized = true;
-            console.log('✓ EmailJS initialized successfully');
-            return;
+            if (emailjsLib.init) {
+                emailjsLib.init('qNaDXo_utvnDMWS3Q');
+                emailjsInitialized = true;
+                console.log('✓ EmailJS initialized successfully');
+                return;
+            } else if (emailjsLib.default && emailjsLib.default.init) {
+                emailjsLib.default.init('qNaDXo_utvnDMWS3Q');
+                emailjsInitialized = true;
+                console.log('✓ EmailJS initialized successfully');
+                return;
+            }
         } catch (error) {
             console.error('Error initializing EmailJS:', error);
             emailjsInitialized = false;
         }
+    } else {
+        console.log('EmailJS library not yet loaded, retry count:', emailjsRetryCount);
     }
     
     emailjsRetryCount++;
@@ -31,6 +47,7 @@ function initEmailJS() {
         setTimeout(initEmailJS, 100);
     } else {
         console.error('❌ EmailJS failed to load. CDN may be unavailable or blocked.');
+        console.error('Please check: 1) Network connectivity 2) Browser console for CORS errors 3) Firewall/VPN blocking CDN');
         emailjsInitialized = false;
     }
 }
@@ -44,6 +61,7 @@ document.addEventListener('DOMContentLoaded', initEmailJS);
 // Try again on full page load
 window.addEventListener('load', () => {
     if (!emailjsInitialized) {
+        console.log('Retrying EmailJS initialization on page load...');
         setTimeout(initEmailJS, 500);
     }
 });
@@ -144,8 +162,17 @@ contactForm.addEventListener('submit', async (e) => {
     showStatus('Sending your message...', '');
 
     try {
+        // Get the correct emailjs library reference
+        const emailjsLib = typeof emailjs !== 'undefined' ? emailjs : window.emailjs;
+        const sendMethod = emailjsLib.send || (emailjsLib.default && emailjsLib.default.send);
+        
+        if (!sendMethod) {
+            showStatus('Email service not ready. Please try again in a moment.', 'error');
+            return;
+        }
+
         // Send email using EmailJS
-        const response = await emailjs.send(
+        const response = await sendMethod(
             'service_3qvet2i',     // Your Service ID
             'template_yfey2qh',    // Your Template ID
             {

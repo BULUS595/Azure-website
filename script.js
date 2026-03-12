@@ -1,70 +1,78 @@
 // ==========================================
-// EMAILJS INITIALIZATION
+// FORM SUBMISSION WITH FORMSUBMIT.CO
 // ==========================================
 
-// EmailJS initialization with retry logic
-let emailjsRetryCount = 0;
-const MAX_EMAILJS_RETRIES = 50;
-let emailjsInitialized = false;
+const contactForm = document.getElementById('contactForm');
+const formStatus = document.getElementById('formStatus');
 
-function initEmailJS() {
-    // Check for emailjs library - handle both old and new package formats
-    let emailjsLib = null;
-    
-    if (typeof emailjs !== 'undefined') {
-        emailjsLib = emailjs;
-    } else if (typeof window.emailjs !== 'undefined') {
-        emailjsLib = window.emailjs;
+contactForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Check if form is already submitting
+    if (contactForm.classList.contains('submitting')) {
+        return;
     }
-    
-    if (emailjsLib) {
-        console.log('EmailJS library found, attempting initialization...');
+
+    // Get form data
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const request = document.getElementById('request').value.trim();
+    const message = document.getElementById('message').value.trim();
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showStatus('Please enter a valid email address', 'error');
+        return;
+    }
+
+    // Validate form
+    if (!name || !email || !phone || !request || !message) {
+        showStatus('Please fill in all fields', 'error');
+        return;
+    }
+
+    // Show loading state
+    showStatus('Sending your message...', '');
+    contactForm.classList.add('submitting');
+
+    try {
+        // Send email using FormSubmit.co
+        const formData = new FormData(contactForm);
         
-        // Try different initialization methods for compatibility
-        try {
-            if (emailjsLib.init) {
-                emailjsLib.init('qNaDXo_utvnDMWS3Q');
-                emailjsInitialized = true;
-                console.log('✓ EmailJS initialized successfully');
-                return;
-            } else if (emailjsLib.default && emailjsLib.default.init) {
-                emailjsLib.default.init('qNaDXo_utvnDMWS3Q');
-                emailjsInitialized = true;
-                console.log('✓ EmailJS initialized successfully');
-                return;
-            }
-        } catch (error) {
-            console.error('Error initializing EmailJS:', error);
-            emailjsInitialized = false;
+        const response = await fetch('https://formsubmit.co/ajax/dre7080552@gmail.com', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (response.ok) {
+            console.log('✓ Email sent successfully!');
+            showStatus('✓ Message sent successfully! I\'ll get back to you soon.', 'success');
+            contactForm.reset();
+        } else {
+            throw new Error('Form submission failed');
         }
-    } else {
-        console.log('EmailJS library not yet loaded, retry count:', emailjsRetryCount);
-    }
-    
-    emailjsRetryCount++;
-    
-    if (emailjsRetryCount < MAX_EMAILJS_RETRIES) {
-        setTimeout(initEmailJS, 100);
-    } else {
-        console.error('❌ EmailJS failed to load. CDN may be unavailable or blocked.');
-        console.error('Please check: 1) Network connectivity 2) Browser console for CORS errors 3) Firewall/VPN blocking CDN');
-        emailjsInitialized = false;
-    }
-}
-
-// Initialize immediately
-initEmailJS();
-
-// Initialize after DOM ready
-document.addEventListener('DOMContentLoaded', initEmailJS);
-
-// Try again on full page load
-window.addEventListener('load', () => {
-    if (!emailjsInitialized) {
-        console.log('Retrying EmailJS initialization on page load...');
-        setTimeout(initEmailJS, 500);
+    } catch (error) {
+        console.error('❌ Form submission error:', error);
+        showStatus('Failed to send message. Please try again or contact directly.', 'error');
+    } finally {
+        contactForm.classList.remove('submitting');
     }
 });
+
+function showStatus(message, type) {
+    formStatus.textContent = message;
+    formStatus.className = 'form-status ' + type;
+
+    // Clear message after 6 seconds for success, keep error visible
+    if (type === 'success') {
+        setTimeout(() => {
+            formStatus.textContent = '';
+            formStatus.className = 'form-status';
+        }, 6000);
+    }
+}
 
 // ==========================================
 // ==========================================
@@ -119,127 +127,6 @@ function updateActiveLink() {
             });
         }
     });
-}
-
-// ==========================================
-// CONTACT FORM HANDLER - EMAILJS
-// ==========================================
-
-const contactForm = document.getElementById('contactForm');
-const formStatus = document.getElementById('formStatus');
-
-contactForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    // Check if EmailJS is initialized
-    if (!emailjsInitialized || typeof emailjs === 'undefined') {
-        showStatus('Email service is loading. Please wait a moment and try again.', 'error');
-        console.error('EmailJS not initialized. Retry count:', emailjsRetryCount);
-        return;
-    }
-
-    // Get form data
-    const name = document.getElementById('name').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const phone = document.getElementById('phone').value.trim();
-    const request = document.getElementById('request').value.trim();
-    const message = document.getElementById('message').value.trim();
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        showStatus('Please enter a valid email address', 'error');
-        return;
-    }
-
-    // Validate form
-    if (!name || !email || !phone || !request || !message) {
-        showStatus('Please fill in all fields', 'error');
-        return;
-    }
-
-    // Show loading state
-    showStatus('Sending your message...', '');
-
-    try {
-        // Get the correct emailjs library reference
-        const emailjsLib = typeof emailjs !== 'undefined' ? emailjs : window.emailjs;
-        const sendMethod = emailjsLib.send || (emailjsLib.default && emailjsLib.default.send);
-        
-        if (!sendMethod) {
-            showStatus('Email service not ready. Please try again in a moment.', 'error');
-            return;
-        }
-
-        // Send email using EmailJS
-        const response = await sendMethod(
-            'service_3qvet2i',     // Your Service ID
-            'template_yfey2qh',    // Your Template ID
-            {
-                from_name: name,
-                from_email: email,
-                phone_number: phone,
-                project_request: request,
-                message: message,
-                to_email: 'dre7080552@gmail.com',
-                reply_to: email  // Add reply-to for better email routing
-            },
-            'qNaDXo_utvnDMWS3Q'  // Explicit public key
-        );
-
-        // Log success for debugging
-        console.log('✓ Email sent successfully!', response);
-
-        if (response.status === 200) {
-            showStatus('✓ Message sent successfully! I\'ll get back to you soon.', 'success');
-            contactForm.reset();
-        }
-    } catch (error) {
-        // Detailed error logging
-        console.error('❌ EmailJS Error:', error);
-        console.error('Error Name:', error.name);
-        console.error('Error Message:', error.message);
-        
-        if (error.status) {
-            console.error('Error Status:', error.status);
-        }
-        
-        if (error.text) {
-            console.error('Error Details:', error.text);
-        }
-
-        // User-friendly error message
-        let userMessage = 'Failed to send message. ';
-        
-        if (error.status === 0) {
-            userMessage += 'Network error. Check your internet connection.';
-        } else if (error.status === 400) {
-            userMessage += 'Invalid form data. Please check your inputs.';
-        } else if (error.status === 401) {
-            userMessage += 'Authentication error. Please try again in a few moments.';
-        } else if (error.status === 403) {
-            userMessage += 'Permission denied. Service may be temporarily unavailable.';
-        } else if (error.text) {
-            userMessage += error.text;
-        } else {
-            userMessage += 'Please try again shortly.';
-        }
-        
-        showStatus(userMessage, 'error');
-    }
-});
-
-function showStatus(message, type) {
-    formStatus.textContent = message;
-    formStatus.className = 'form-status ' + type;
-
-    // Clear message after 6 seconds for success, keep error visible
-    if (type === 'success') {
-        setTimeout(() => {
-            formStatus.textContent = '';
-            formStatus.className = 'form-status';
-        }, 6000);
-    }
 }
 
 // ==========================================
